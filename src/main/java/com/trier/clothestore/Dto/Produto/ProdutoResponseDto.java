@@ -7,6 +7,7 @@ public record ProdutoResponseDto(
 ) {
     public ProdutoResponseDto(Produto produto){
         this(produto.getIdProduto(),
-                produto.getNomeProduto(), produto.getPrecoProduto());
+                produto.getNomeProduto(),
+                produto.getPrecoProduto());
     }
 }
