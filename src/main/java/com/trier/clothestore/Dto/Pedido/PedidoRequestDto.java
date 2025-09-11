@@ -7,4 +7,5 @@ import java.util.List;
 public record PedidoRequestDto(
         List<ItemPedido> itens
 ) {
+
 }

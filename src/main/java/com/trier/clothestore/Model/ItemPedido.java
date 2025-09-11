@@ -1,5 +1,6 @@
 package com.trier.clothestore.Model;
 
+import com.trier.clothestore.Dto.ItemPedido.ItemPedidoRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +16,10 @@ public class ItemPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idItemProduto;
     private Integer quantidade;
-    private Double precoProduto;
+    private Double precoUnitario;
+
+    public ItemPedido(ItemPedidoRequestDto itemPedidoRequest){
+        this.quantidade = itemPedidoRequest.quantidade();
+        this.precoUnitario = itemPedidoRequest.precoProduto();
+    }
 }
