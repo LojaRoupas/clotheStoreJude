@@ -1,5 +1,6 @@
 package com.trier.clothestore.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.trier.clothestore.Dto.ItemPedido.ItemPedidoRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class ItemPedido {
     private Double precoUnitario;
     @ManyToOne
     @JoinColumn(name = "pedido_id") //nome da coluna da chave estrangeita do bd
+    @JsonBackReference // ignorar a serialização de uma parte de um relacionamento bidirecional.
     private Pedido pedido;
 
     public ItemPedido(ItemPedidoRequestDto itemPedidoRequest){
