@@ -3,13 +3,13 @@ package com.trier.clothestore.Dto.ItemPedido;
 import com.trier.clothestore.Model.ItemPedido;
 
 public record ItemPedidoResponseDto(
-        Integer idItemProduto,
+        Integer idItemPedido,
         Integer quantidade,
-        Double precoProduto
+        Double precoUnitario
 ) {
     public ItemPedidoResponseDto(ItemPedido itemPedido){
-        this(itemPedido.getIdItemProduto(),
+        this(itemPedido.getIdItemPedido(),
                 itemPedido.getQuantidade(),
-                itemPedido.getPrecoProduto());
+                itemPedido.getPrecoUnitario());
     }
 }

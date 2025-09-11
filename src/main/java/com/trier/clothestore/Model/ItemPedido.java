@@ -14,11 +14,16 @@ import lombok.NoArgsConstructor;
 public class ItemPedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idItemProduto;
+    private Integer idItemPedido;
+    private String nomeItem;
     private Integer quantidade;
     private Double precoUnitario;
+    @ManyToOne
+    @JoinColumn(name = "pedido_id") //nome da coluna da chave estrangeita do bd
+    private Pedido pedido;
 
     public ItemPedido(ItemPedidoRequestDto itemPedidoRequest){
+        this.nomeItem = itemPedidoRequest.nomeItem();
         this.quantidade = itemPedidoRequest.quantidade();
         this.precoUnitario = itemPedidoRequest.precoProduto();
     }

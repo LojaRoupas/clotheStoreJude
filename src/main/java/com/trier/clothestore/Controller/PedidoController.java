@@ -2,6 +2,7 @@ package com.trier.clothestore.Controller;
 
 import com.trier.clothestore.Dto.Pedido.PedidoRequestDto;
 import com.trier.clothestore.Dto.Pedido.PedidoResponseDto;
+import com.trier.clothestore.Model.ItemPedido;
 import com.trier.clothestore.Model.Pedido;
 import com.trier.clothestore.Repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,12 @@ public class PedidoController {
     @PostMapping
     public ResponseEntity criarPedido(@RequestBody PedidoRequestDto pedidoRequest){
         Pedido novoPedido = new Pedido(pedidoRequest);
+
+        if (novoPedido.getItens() != null) {
+            for (ItemPedido item : novoPedido.getItens()) {
+                item.setPedido(novoPedido);
+            }
+        }
         this.pedidoRepository.save(novoPedido);
 
         return ResponseEntity.ok().build();
