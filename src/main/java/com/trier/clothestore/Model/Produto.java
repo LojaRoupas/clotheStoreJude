@@ -1,5 +1,6 @@
 package com.trier.clothestore.Model;
 
+import com.trier.clothestore.Dto.Produto.ProdutoRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,4 +17,9 @@ public class Produto {
     private Integer id;
     private String nome;
     private Double preco;
+
+    public Produto(ProdutoRequestDto produtoRequest) {
+        this.nome = produtoRequest.nome();
+        this.preco = produtoRequest.preco();
+    }
 }
