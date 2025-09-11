@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String nome;
-    private Double preco;
+    private Integer idProduto;
+    private String nomeProduto;
+    private Double precoProduto;
 
     public Produto(ProdutoRequestDto produtoRequest) {
-        this.nome = produtoRequest.nome();
-        this.preco = produtoRequest.preco();
+        this.nomeProduto = produtoRequest.nome();
+        this.precoProduto = produtoRequest.preco();
     }
 }

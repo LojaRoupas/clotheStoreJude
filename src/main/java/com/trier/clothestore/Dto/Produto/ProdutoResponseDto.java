@@ -3,9 +3,10 @@ package com.trier.clothestore.Dto.Produto;
 import com.trier.clothestore.Model.Produto;
 
 public record ProdutoResponseDto(
-        Integer id, String nome, Double preco
+        Integer idProduto, String nomeProduto, Double precoProduto
 ) {
     public ProdutoResponseDto(Produto produto){
-        this(produto.getId(), produto.getNome(), produto.getPreco());
+        this(produto.getIdProduto(),
+                produto.getNomeProduto(), produto.getPrecoProduto());
     }
 }
