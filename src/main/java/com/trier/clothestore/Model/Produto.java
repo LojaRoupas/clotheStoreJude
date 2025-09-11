@@ -19,7 +19,7 @@ public class Produto {
     private Double precoProduto;
 
     public Produto(ProdutoRequestDto produtoRequest) {
-        this.nomeProduto = produtoRequest.nome();
-        this.precoProduto = produtoRequest.preco();
+        this.nomeProduto = produtoRequest.nomeProduto();
+        this.precoProduto = produtoRequest.precoProduto();
     }
 }
