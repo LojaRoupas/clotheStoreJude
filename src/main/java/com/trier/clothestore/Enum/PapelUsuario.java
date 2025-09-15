@@ -1,6 +1,16 @@
 package com.trier.clothestore.Enum;
 
 public enum PapelUsuario {
-    ADMIN,
-    USUARIO
+    ADMIN("admin"),
+    USUARIO("usuario");
+
+    private String papel;
+
+    PapelUsuario (String papel){
+        this.papel = papel;
+    }
+
+    public String getPapel(){
+        return papel;
+    }
 }
