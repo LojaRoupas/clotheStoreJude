@@ -1,9 +1,11 @@
 package com.trier.clothestore.Controller;
 
 import com.trier.clothestore.Dto.Usuario.AutenticacaoUsuarioDto;
+import com.trier.clothestore.Dto.Usuario.LoginResponseDto;
 import com.trier.clothestore.Dto.Usuario.RegistrarUsuarioDto;
 import com.trier.clothestore.Model.Usuario;
 import com.trier.clothestore.Repository.UsuarioRepository;
+import com.trier.clothestore.Service.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutenticacaoController {
 
     @Autowired
+    TokenService tokenService;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
@@ -30,7 +35,8 @@ public class AutenticacaoController {
         var usuarioSenha = new UsernamePasswordAuthenticationToken(usuarioDto.email(), usuarioDto.senha());
         var autenticacao = this.authenticationManager.authenticate(usuarioSenha);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.gerarToken((Usuario) autenticacao.getPrincipal());
+        return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
     @PostMapping("/registrar")
