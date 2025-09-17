@@ -3,25 +3,58 @@ package com.trier.clothestore.Security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
+                                                   AuthenticationProvider authenticationProvider) throws Exception {
         return httpSecurity
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> //como o servidor armazena as infos sobre os users
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //requisicoes independentes contendo infos necessarias para autenticar usuario
-                .authorizeHttpRequests(authorize -> authorize //quais requisicoes serao autenticadas
-                        .requestMatchers(HttpMethod.POST, "/produtos").hasRole("ADMIN") //qualquer request POST para o endpoint "produtos" usuario deve ter Papel admin
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .authenticationProvider(authenticationProvider)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/auth/**").permitAll()                 // << libera /auth/registrar e /auth/login
+                        .requestMatchers(HttpMethod.POST, "/produtos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/pedidos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/itenspedido").hasRole("ADMIN")
-                        .anyRequest().authenticated()) //para o resto das requiscoes sera apenas autenticado
+                        .anyRequest().authenticated()
+                )
                 .build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
+                                                         PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider p = new DaoAuthenticationProvider();
+        p.setUserDetailsService(userDetailsService); // usa seu AuthorizationService
+        p.setPasswordEncoder(passwordEncoder);       // BCrypt
+        return p;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    //criptografia da senha
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }

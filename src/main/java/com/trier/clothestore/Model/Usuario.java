@@ -21,47 +21,35 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idUsuario;
+
     private String email;
     private String senha;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
     private PapelUsuario papel;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.papel == PapelUsuario.ADMIN){
-            return List.of(new SimpleGrantedAuthority("PAPEL_ADMIN"), new SimpleGrantedAuthority("PAPEL_USUARIO"));
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USUARIO")
+            );
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USUARIO"));
         }
-        else {
-            return List.of(new SimpleGrantedAuthority("PAPEL_USUARIO"));
-        }
     }
 
-    @Override
-    public String getPassword() {
-        return "";
+    @Override public String getPassword() { return senha; }
+    public Usuario (String email, String senha, PapelUsuario papel){
+        this.email = email;
+        this.senha = senha;
+        this.papel = papel;
     }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    @Override public String getUsername() { return email; }
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isEnabled() { return true; }
 }
