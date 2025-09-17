@@ -34,7 +34,7 @@ public class SecurityConfigurations {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()                 // << libera /auth/registrar e /auth/login
+                        .requestMatchers("/auth/**").permitAll()  // << libera /auth/registrar e /auth/login
                         .requestMatchers(HttpMethod.POST, "/produtos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/pedidos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/itenspedido").hasRole("ADMIN")
@@ -48,7 +48,7 @@ public class SecurityConfigurations {
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
                                                          PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider p = new DaoAuthenticationProvider();
-        p.setUserDetailsService(userDetailsService); // usa seu AuthorizationService
+        p.setUserDetailsService(userDetailsService); // usa AuthorizationService
         p.setPasswordEncoder(passwordEncoder);       // BCrypt
         return p;
     }

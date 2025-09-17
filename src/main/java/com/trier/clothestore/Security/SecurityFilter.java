@@ -25,21 +25,29 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     UsuarioRepository usuarioRepository;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
-        if (token != null){
-            var login = tokenService.validarToken(token);
-            UserDetails usuario = usuarioRepository.findByEmail(login);
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        String token = recoverToken(request);
 
-            var autenticacao = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(autenticacao);
+        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            String subject = tokenService.validarToken(token); // email ou "" se invalido
+
+            if (subject != null && !subject.isBlank()) {       //checa token valido
+                UserDetails usuario = usuarioRepository.findByEmail(subject);
+                if (usuario != null) {                         // checa usuario existente
+                    var autenticacao = new UsernamePasswordAuthenticationToken(
+                            usuario, null, usuario.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(autenticacao);
+                }
+            }
         }
-        filterChain.doFilter(request, response); //chama o proximo filtro (UsernamePasswordAuthenticationFilter)
+        filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request){
-        var autorizacaoHeader = request.getHeader("Authorization");
-        if (autorizacaoHeader == null) return null;
-        return autorizacaoHeader.replace("Bearer ", "");
+        String h = request.getHeader("Authorization");
+        if (h == null) return null;
+        return h.toLowerCase().startsWith("bearer ") ? h.substring(7) : null; // aceita "Bearer " ou "bearer "
     }
 }
