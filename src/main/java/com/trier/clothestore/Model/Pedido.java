@@ -1,5 +1,6 @@
 package com.trier.clothestore.Model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.trier.clothestore.Dto.Pedido.PedidoRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,8 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPedido;
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemPedido> itens;
 
-    public Pedido(PedidoRequestDto pedidoRequest) {
-        this.itens = pedidoRequest.itens();
-    }
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ItemPedido> itens;
 }

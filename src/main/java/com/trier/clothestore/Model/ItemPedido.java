@@ -13,20 +13,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemPedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idItemPedido;
+
+    // snapshots (opcional, mas útil para manter o histórico do pedido)
     private String nomeItem;
     private Integer quantidade;
     private Double precoUnitario;
-    @ManyToOne
-    @JoinColumn(name = "pedido_id") //nome da coluna da chave estrangeita do bd
-    @JsonBackReference // ignorar a serialização de uma parte de um relacionamento bidirecional.
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "pedido_id", nullable = false) // FK para pedido
+    @JsonBackReference // evita loop na serialização (lado "filho")
     private Pedido pedido;
 
-    public ItemPedido(ItemPedidoRequestDto itemPedidoRequest){
-        this.nomeItem = itemPedidoRequest.nomeItem();
-        this.quantidade = itemPedidoRequest.quantidade();
-        this.precoUnitario = itemPedidoRequest.precoProduto();
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "produto_id", nullable = false) //FK para produto
+    private Produto produto;
+
+    public ItemPedido(Produto produto, Integer quantidade, Pedido pedido) {
+        this.produto = produto;
+        this.quantidade = quantidade;
+        this.pedido = pedido;
+
+        this.nomeItem = produto.getNomeProduto();
+        this.precoUnitario = produto.getPrecoProduto();
+    }
+
+    public ItemPedido(ItemPedidoRequestDto itemPedidoRequest, Produto produto, Pedido pedido) {
+        this(produto, itemPedidoRequest.quantidade(), pedido);
     }
 }
